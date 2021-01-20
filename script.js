@@ -44,14 +44,29 @@ function createTimeBlocks() {
     }
 }
 
+function getLocalStorage(i) {
+    for (i = 8; i < 16; i++) {
+        let item = localStorage.getItem("text" + i);
+        if (item && item !== "") {
+            $(`#textArea${i}`).text(item);
+        }
+    }
+}
+
+function saveToLocalStorage(currentBtnId, text) {
+    localStorage.setItem("text" + currentBtnId, text);
+}
+
 createTimeBlocks();
+getLocalStorage();
 
 $(".saveBtn").on("click", function () {
     // Get Id of the saveBtn clicked and remove the "btn" text.
+
     let currentBtnId = $(this).attr("id").split("btn")[1];
     let currentBoxId = `#textArea${currentBtnId}`;
+    // Get text from textarea
     let text = $(currentBoxId).val();
-    console.log(text);
 
     saveToLocalStorage(currentBtnId, text);
 })
