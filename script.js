@@ -21,7 +21,8 @@ function createTimeBlocks() {
         // Add timeblock
         let tb = $("<div>");
         tb.addClass("time-block");
-        tb.html(`<textarea id=\`textarea${i}\` rows="4" cols="50" maxlength="200" placeholder="Enter scheduled event"></textarea>`);
+        tb.attr("id", `tb${i}`);
+        tb.html(`<textarea id="textArea${i}" rows="4" cols="50" maxlength="200" placeholder="Enter scheduled event"></textarea>`);
 
         // Add classes based on current time compared to the timeblock
         if (i < now.hour) {
@@ -35,6 +36,7 @@ function createTimeBlocks() {
         // Add save button
         let button = $("<button>");
         button.addClass("saveBtn");
+        button.attr("id", `btn${i}`);
         button.html('<i class="fas fa-save larger-icon"></i>');
 
         row.append(desc, tb, button, hr);
@@ -43,3 +45,17 @@ function createTimeBlocks() {
 }
 
 createTimeBlocks();
+
+$(".saveBtn").on("click", function () {
+    // Get Id of the saveBtn clicked and remove the "btn" text.
+    let currentBtnId = $(this).attr("id").split("btn")[1];
+    let currentBoxId = `#textArea${currentBtnId}`;
+    let text = $(currentBoxId).val();
+    console.log(text);
+
+    saveToLocalStorage(currentBtnId, text);
+})
+
+function saveToLocalStorage(currentBtnId, text) {
+    localStorage.setItem("text" + currentBtnId, text);
+}
