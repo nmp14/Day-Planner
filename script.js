@@ -21,7 +21,16 @@ function createTimeBlocks() {
         // Add timeblock
         let tb = $("<div>");
         tb.addClass("time-block");
-        tb.html(`<textarea id=\`textarea${i}\` rows="4" cols="50" placeholder="Enter scheduled event"></textarea>`);
+        tb.html(`<textarea id=\`textarea${i}\` rows="4" cols="50" maxlength="200" placeholder="Enter scheduled event"></textarea>`);
+
+        // Add classes based on current time compared to the timeblock
+        if (i < now.hour) {
+            tb.addClass("past");
+        } else if (i === now.hour) {
+            tb.addClass("present");
+        } else if (i > now.hour) {
+            tb.addClass("future");
+        }
 
         // Add save button
         let button = $("<button>");
