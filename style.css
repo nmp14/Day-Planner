@@ -72,8 +72,12 @@ textarea{
 }
 
 .saveBtn i:hover {
-  font-size: 20px;
+  font-size: 3.5em;
   transition: all .3s ease-in-out;
+}
+
+.saveBtn:focus {
+  background: teal;
 }
 
 .larger-icon {
