@@ -23,11 +23,13 @@ textarea{
 
 .description{
   white-space: pre-wrap;
+  width: 5%;
 }
 
 .time-block{
   text-align: center;
   border-radius: 15px;
+  width: 80%;
 }
 
 .row {
@@ -63,9 +65,16 @@ textarea{
   border-bottom-right-radius: 15px;
   background-color: #06AED5;
   color: white;
+  width: 10%;
+  max-width: 85px;
 }
 
 .saveBtn i:hover {
   font-size: 20px;
   transition: all .3s ease-in-out;
+}
+
+.larger-icon {
+  font-size: 2.5em;
+  color: pink;
 }
