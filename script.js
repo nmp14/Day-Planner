@@ -1,76 +1,118 @@
-// Create local time for jumbotron header
-let now = luxon.DateTime.local();
-let f = { month: 'long', day: 'numeric' };
-$("#currentDay").html(now.setLocale('en-US').toLocaleString(f) + "<sup>th</sup>");
+$(document).ready(function () {
+    // Create local time for jumbotron header
+    let now = luxon.DateTime.local();
+    let f = { month: 'long', day: 'numeric' };
+    $("#currentDay").html(now.setLocale('en-US').toLocaleString(f) + "<sup>th</sup>");
 
-let container = $(".container");
+    let container = $(".container");
 
-function createTimeBlocks() {
-    // Loops for creating time blocks from 8am to 6pm (i variable in military time)
-    for (let i = 8; i < 19; i++) {
-        let row = $("<div>");
-        row.addClass("row mb-2")
+    let interval1, interval2;
 
-        let hr = $("<hr>")
+    function createTimeBlocks() {
+        // Loops for creating time blocks from 8am to 6pm (i variable in military time)
+        for (let i = 8; i < 19; i++) {
+            let row = $("<div>");
+            row.addClass("row mb-2");
 
-        // Add description
-        let desc = $("<div>");
-        desc.addClass("description");
-        desc.html(i + ":00 - " + i + ":59");
+            let hr = $("<hr>")
 
-        // Add timeblock
-        let tb = $("<div>");
-        tb.addClass("time-block");
-        tb.attr("id", `tb${i}`);
-        tb.html(`<textarea id="textArea${i}" rows="4" cols="50" maxlength="200" placeholder="Enter scheduled event"></textarea>`);
+            // Add description
+            let desc = $("<div>");
+            desc.addClass("description");
+            desc.html(i + ":00 - " + i + ":59");
 
-        // Add classes based on current time compared to the timeblock
-        if (i < now.hour) {
-            tb.addClass("past");
-        } else if (i === now.hour) {
-            tb.addClass("present");
-        } else if (i > now.hour) {
-            tb.addClass("future");
-        }
+            // Add timeblock
+            let tb = $("<div>");
+            tb.addClass("time-block");
+            tb.attr("id", `tb${i}`);
+            tb.html(`<textarea id="textArea${i}" rows="4" cols="50" maxlength="200" placeholder="Enter scheduled event"></textarea>`);
 
-        // Add save button
-        let button = $("<button>");
-        button.addClass("saveBtn");
-        button.attr("id", `btn${i}`);
-        button.html('<i class="fas fa-save larger-icon"></i>');
+            // Add classes based on current time compared to the timeblock
+            if (i < now.hour) {
+                tb.addClass("past");
+            } else if (i === now.hour) {
+                tb.addClass("present");
+            } else if (i > now.hour) {
+                tb.addClass("future");
+            }
 
-        row.append(desc, tb, button, hr);
-        container.append(row);
-    }
-}
+            // Add save button
+            let button = $("<button>");
+            button.addClass("saveBtn");
+            button.attr("id", `btn${i}`);
+            button.html('<i class="fas fa-save larger-icon"></i>');
 
-function getLocalStorage(i) {
-    for (i = 8; i < 16; i++) {
-        let item = localStorage.getItem("text" + i);
-        if (item && item !== "") {
-            $(`#textArea${i}`).text(item);
+            row.append(desc, tb, button, hr);
+            container.append(row);
         }
     }
-}
 
-function saveToLocalStorage(currentBtnId, text) {
-    localStorage.setItem("text" + currentBtnId, text);
-}
+    function getLocalStorage(i) {
+        for (i = 8; i < 16; i++) {
+            let item = localStorage.getItem("text" + i);
+            if (item && item !== "") {
+                $(`#textArea${i}`).text(item);
+            }
+        }
+    }
 
-createTimeBlocks();
-getLocalStorage();
+    function saveToLocalStorage(currentBtnId, text) {
+        localStorage.setItem("text" + currentBtnId, text);
+    }
 
-$(".saveBtn").on("click", function () {
-    // Get Id of the saveBtn clicked and remove the "btn" text.
+    createTimeBlocks();
+    getLocalStorage();
 
-    let currentBtnId = $(this).attr("id").split("btn")[1];
-    let currentBoxId = `#textArea${currentBtnId}`;
-    // Get text from textarea
-    let text = $(currentBoxId).val();
+    $(".saveBtn").on("click", function () {
+        // Get Id of the saveBtn clicked and remove the "btn" text.
 
-    saveToLocalStorage(currentBtnId, text);
-})
+        let currentBtnId = $(this).attr("id").split("btn")[1];
+        let currentBoxId = `#textArea${currentBtnId}`;
+        // Get text from textarea
+        let text = $(currentBoxId).val();
 
-function saveToLocalStorage(currentBtnId, text) {
-    localStorage.setItem("text" + currentBtnId, text);
-}
+        saveToLocalStorage(currentBtnId, text);
+    })
+
+    function saveToLocalStorage(currentBtnId, text) {
+        localStorage.setItem("text" + currentBtnId, text);
+    }
+
+    // Start an interval to get next interval call starting when seconds = 0 (fresh minute)
+    interval1 = setInterval(function () {
+        let dt = luxon.DateTime.local();
+        let second = dt.second;
+        if (second === 0) {
+            callTimeUpdate();
+        }
+    }, 1000)
+
+    function callTimeUpdate() {
+        // Stop interval 1 as we are on a fresh minute now.
+        clearInterval(interval1);
+        interval2 = setInterval(function () {
+            let dt = luxon.DateTime.local();
+            let minute = dt.minute;
+            console.log(minute);
+            if (minute === 0) {
+                let hour = dt.hour;
+                let tb = $(".time-block");
+                // check time of time block based on id and compare to hour. 
+                if (parseInt(tb.attr("id").split("tb")[1]) < hour) {
+                    if (tb.hasClass("present")) {
+                        tb.removeClass("present");
+                        tb.addClass("past");
+                    }
+                } else if (parseInt(tb.attr("id").split("tb")[1]) === hour) {
+                    tb.removeClass("future");
+                    tb.addClass("present");
+                } else if (parseInt(tb.attr("id").split("tb")[1]) > hour) {
+                    tb.removeClass("past");
+                    tb.removeClass("present");
+                    tb.addClass("future");
+                }
+
+            }
+        }, 60000);
+    }
+});
