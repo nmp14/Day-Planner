@@ -93,27 +93,25 @@ $(document).ready(function () {
         interval2 = setInterval(function () {
             let dt = luxon.DateTime.local();
             let minute = dt.minute;
-            console.log(minute);
             if (minute === 0) {
-                let hour = dt.hour;
+                let hour = parseInt(dt.hour);
                 let tb = $(".time-block");
-                tb.forEach(element => {
-                    console.log(element);
+                for (let i = 0; i < tb.length; i++) {
+                    console.log(tb[i].id.split("tb")[1]);
                     // check time of time block based on id and compare to hour. 
-                    if (parseInt(element.id.split('tb')[1]) < hour) {
-                        if (tb.hasClass("present")) {
-                            tb.removeClass("present");
-                            tb.addClass("past");
+                    if ((parseInt(tb[i].id.split('tb')[1])) < hour) {
+                        if ($(tb[i]).hasClass("present")) {
+                            $(tb[i]).removeClass("present");
                         }
-                    } else if (parseInt(element.id.split('tb')[1]) === hour) {
-                        tb.removeClass("future");
-                        tb.addClass("present");
-                    } else if (parseInt(element.id.split('tb')[1]) > hour) {
-                        tb.removeClass("past");
-                        tb.removeClass("present");
-                        tb.addClass("future");
+                        $(tb[i]).addClass("past");
+                    } else if ((parseInt(tb[i].id.split('tb')[1])) === hour) {
+                        $(tb[i]).removeClass("future");
+                        $(tb[i]).addClass("present");
+                    } else if ((parseInt(tb[i].id.split('tb')[1])) > hour) {
+                        $(tb[i]).removeClass("present");
+                        $(tb[i]).addClass("future");
                     }
-                });
+                };
             }
         }, 60000);
     }
