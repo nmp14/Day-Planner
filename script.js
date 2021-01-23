@@ -97,21 +97,23 @@ $(document).ready(function () {
             if (minute === 0) {
                 let hour = dt.hour;
                 let tb = $(".time-block");
-                // check time of time block based on id and compare to hour. 
-                if (parseInt(tb.attr("id").split("tb")[1]) < hour) {
-                    if (tb.hasClass("present")) {
+                tb.forEach(element => {
+                    console.log(element);
+                    // check time of time block based on id and compare to hour. 
+                    if (parseInt(element.id.split('tb')[1]) < hour) {
+                        if (tb.hasClass("present")) {
+                            tb.removeClass("present");
+                            tb.addClass("past");
+                        }
+                    } else if (parseInt(element.id.split('tb')[1]) === hour) {
+                        tb.removeClass("future");
+                        tb.addClass("present");
+                    } else if (parseInt(element.id.split('tb')[1]) > hour) {
+                        tb.removeClass("past");
                         tb.removeClass("present");
-                        tb.addClass("past");
+                        tb.addClass("future");
                     }
-                } else if (parseInt(tb.attr("id").split("tb")[1]) === hour) {
-                    tb.removeClass("future");
-                    tb.addClass("present");
-                } else if (parseInt(tb.attr("id").split("tb")[1]) > hour) {
-                    tb.removeClass("past");
-                    tb.removeClass("present");
-                    tb.addClass("future");
-                }
-
+                });
             }
         }, 60000);
     }
