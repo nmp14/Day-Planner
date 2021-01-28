@@ -48,7 +48,7 @@ $(document).ready(function () {
     }
 
     function getLocalStorage(i) {
-        for (i = 8; i < 16; i++) {
+        for (i = 8; i < 19; i++) {
             let item = localStorage.getItem("text" + i);
             if (item && item !== "") {
                 $(`#textArea${i}`).text(item);
